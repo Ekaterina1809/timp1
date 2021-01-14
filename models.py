@@ -1,7 +1,7 @@
 import datetime, re
 from app import db
 
-def slugify(s)
+def slugify(s):
     return re.sub('[^\w]+','-',s).lower()
 
 class Entry(db.Model):
