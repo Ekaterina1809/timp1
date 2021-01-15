@@ -37,11 +37,20 @@
 
 <div class="bg2">
 
-<form action="action_page.php">
+<form action="/Rega" method="POST" role="form">>
   <div class="container">
     <h1>Регистрация</h1>
     <p>Пожалуйста заполните форму для создания аккаунта.</p>
     <hr>
+    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="alert alert-danger">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
 
         <label for="psw-repeat"><b>ФИО или наименование организации</b></label>
     <input type="text" placeholder="ФИО" name="namefam" required>

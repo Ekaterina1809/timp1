@@ -1,5 +1,24 @@
-import os
-class Configuration():
-    APPLICATION_DIR=os.path.dirname(os.path.realpath(__file__))
-    DEBUG=True
-    #SQLALCHEMY_DATABASE_URL='sqllite:///%s/cookie.db?check_some_thread=False' % APPLICATION_DIR
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+#from flask_login import LoginManager
+from hashlib import sha256
+
+# соль
+salt = 'qwerty123'
+# пароль администратора
+#admin_password = 'admin'
+
+app = Flask(__name__, static_folder='static')
+app.secret_key = salt
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://postgres:postgres@bets-db:5432'
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#db = SQLAlchemy(app)
+#login_manager = LoginManager(app)
+
+TIME_FORMAT = '%Y-%m-%dT%H:%M'
+
+#import models
+#import app
+
+#db.create_all()
+

@@ -1,5 +1,5 @@
 import datetime, re
-from app import db
+#from app import db
 
 def slugify(s):
     return re.sub('[^\w]+','-',s).lower()

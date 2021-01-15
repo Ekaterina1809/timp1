@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, abort, flash, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 
-from config import Configuration
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from contextlib import closing
+from hashlib import sha256
+from config import (salt)
 
 mysql = MySQL()
 app=Flask(__name__)
@@ -13,6 +14,12 @@ app=Flask(__name__)
 
 import mysql.connector
 from mysql.connector import Error
+
+@app.after_request
+def redirect_to_signin(response):
+    if response.status_code == 401:
+        return redirect(url_for('Vhod') + '?next=' + request.url)
+    return response
 
 def connect():
     """ Connect to MySQL database """
@@ -59,8 +66,8 @@ def register():
                                        database='timp',
                                        user='root',
                                        password='1809')
-        if conn.is_connected():
-            print('Connected to MySQL database')
+        #if conn.is_connected():
+        #fr    print('Connected to MySQL database')
         cursor = conn.cursor()  # используя метод cursor() получаем объект для работы с базой
         #conn = mysql.connect()
 
@@ -78,19 +85,45 @@ def register():
             else:
                 #password = sha256((password + salt).encode()).hexdigest()
                 # формируем sql запрос на запись
-                cursor.execute("INSERT INTO client (id_client ,login,password,fio,phone,type)",
-                               (0, login, password,fio,phone,type))
+                sql="INSERT INTO client (id_client ,login,password,fio,phone,type) VALUES (%s, %s,%s, %s,%s, %s)"
+                val =(0, login, password,fio,phone,type)
                 # исполняем SQL-запрос
-                #cursor.execute(sql)
+                cursor.execute(sql,val)
                 # применяем изменения к базе данных
                 conn.commit()
                 conn.close()
                 return redirect(url_for('Katalog'))
     return render_template('Rega.html')
 
-@app.route('/Vhod')
+@app.route('/Katalog')
+def Katalog():
+    return render_template('Katalog.html')
+
+@app.route('/Vhod',methods=['GET', 'POST'])
 def login():
-    return render_template('Vhod.html')
+        if request.method == 'POST':
+            login = request.form.get('login')
+            password = request.form.get('password')
+            if login and password:
+                #user = User.query.filter_by(login=login).first()
+                #password = sha256((password + salt).encode()).hexdigest()
+                if user and user.password == password:
+                    #login_user(user)
+                    next_page = request.args.get('next')
+                    if next_page:
+                        return redirect(next_page)
+                    return redirect(url_for('index'))
+                else:
+                    flash('Incorrect login or password')
+            else:
+                flash('Please enter login and password')
+        return render_template('Vhod.html')
+
+#@app.route('/logout', methods=['GET', 'POST'])
+#@login_required
+#def logout():
+#    logout_user()
+#   return redirect(url_for('index'))
 
 @app.route('/user/<name>')
 @app.route('/user/')
