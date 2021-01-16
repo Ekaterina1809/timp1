@@ -1,25 +1,45 @@
-import datetime, re
-#from app import db
+from flask_login import UserMixin
 
-def slugify(s):
-    return re.sub('[^\w]+','-',s).lower()
+from config import db, login_manager
+#from route import db, login_manager
 
-class Entry(db.Model):
-    id=db.Column(db.Integer,primary_key=True)
-    title=db.Column(db.String(100))
-    slug=db.Column(db.String(100),unique=True)  #заголовок
-    body=db.Column(db.Text)                     #содержимое
-    create_timestamp=db.Column(db.DataTime, datetime=datetime.datetime.now)
-    modified_timestamp = db.Column(db.DataTime, datetime=datetime.datetime.now, onupdate=datetime.datetime.now)
+class client(db.Model, UserMixin):
+    id_client = db.Column(db.Integer, primary_key=True, unique=True)
+    login = db.Column(db.String(128), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
+    fio = db.Column(db.String, nullable=False)
+    phone = db.Column(db.String, nullable=False, default=0)
+    type = db.Column(db.String, nullable=False, default=0)
 
-    def __init__(self,*args, **kwargs):             #автоматически переопределяет таблицы в соответствии с заголовками
-        super(Entry,self).__init(*args,**kwargs)
-        self.generate_slug
 
-    def generate_slug(self):                        #
-        self.slug=''
-        if self.title:
-            self.slug=slugify(self.title)
+'''class Bet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer, nullable=False)
+    team_1 = db.Column(db.Boolean, nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    ended = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __str__(self):                              #полезно при отладке
-        return 'Entry: %s>' %self.title
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_1 = db.Column(db.Integer, nullable=False)
+    team_2 = db.Column(db.Integer, nullable=False)
+    bets = db.relationship('Bet', backref='event', lazy=True)
+    amount1 = db.Column(db.Integer, nullable=False, default=0)
+    amount2 = db.Column(db.Integer, nullable=False, default=0)
+    time = db.Column(db.DateTime, nullable=False)
+    ended = db.Column(db.Boolean, nullable=False, default=False)
+    winner = db.Column(db.Boolean, nullable=True)
+
+
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
+    avatar_uri = db.Column(db.String(128))
+    # events = db.relationship('Event', backref='teams', lazy=True)
+'''
+
+@login_manager.user_loader
+def load_client(login):
+    return client.query.get(login);

@@ -37,20 +37,12 @@
 
 <div class="bg2">
 
-<form action="/Rega" method="POST" role="form">>
+<form action="/Rega" method="POST" role="form">
   <div class="container">
     <h1>Регистрация</h1>
     <p>Пожалуйста заполните форму для создания аккаунта.</p>
     <hr>
-    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="alert alert-danger">
-                        {% for message in messages %}
-                            {{ message }}
-                        {% endfor %}
-                        </div>
-                    {% endif %}
-                    {% endwith %}
+
 
         <label for="psw-repeat"><b>ФИО или наименование организации</b></label>
     <input type="text" placeholder="ФИО" name="namefam" required>
@@ -66,7 +58,15 @@
 
     <label for="psw-repeat"><b>Повторите пароль</b></label>
     <input type="password" placeholder="Повторите Пароль" name="psw-repeat" required>
-
+    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flashes" style="color:#dc3545">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
     <label for="psw-repeat"><b>Если вы физическое лицо введите "0",в ином случае "1" </b></label>
     <input type="lico" placeholder="Введите 1 или 0" name="num-lico" required>
 
