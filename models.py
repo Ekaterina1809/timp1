@@ -4,7 +4,7 @@ from config import db, login_manager
 #from route import db, login_manager
 
 class client(db.Model, UserMixin):
-    id_client = db.Column(db.Integer, primary_key=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     login = db.Column(db.String(128), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     fio = db.Column(db.String, nullable=False)
@@ -41,5 +41,5 @@ class Team(db.Model):
 '''
 
 @login_manager.user_loader
-def load_client(login):
-    return client.query.get(login);
+def load_user(client_id_client):
+    return db.session.query(client).get(client_id_client);

@@ -13,6 +13,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1809@127.0.0.1:3306/timp1'
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.view='login'
 
 TIME_FORMAT = '%Y-%m-%dT%H:%M'
 
